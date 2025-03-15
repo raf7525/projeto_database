@@ -1,0 +1,10 @@
+services:
+  mysql:
+    image: 'mysql:latest'
+    environment:
+      - 'MYSQL_DATABASE=hospital_db'
+      - 'MYSQL_PASSWORD=06102005'
+      - 'MYSQL_ROOT_PASSWORD=06102005'
+      - 'MYSQL_USER=admin'
+    ports:
+      - '3307:3306'
