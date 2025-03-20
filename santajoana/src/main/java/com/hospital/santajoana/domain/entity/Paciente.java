@@ -1,5 +1,7 @@
 package com.hospital.santajoana.domain.entity;
 
+import java.time.LocalDate;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -7,14 +9,11 @@ import lombok.Data;
 @AllArgsConstructor
 public class Paciente {
 
-    private Long id;
+    private Long id_paciente; // Primary Key
     private String nome;
     private String cpf;
-    private String telefone;
-    private String email;
-    private String endereco;
-    private String dataNascimento;
-    private String sexo;
-    private String tipoSanguineo;
+    private LocalDate data_nascimento;
+    private Long quarto_id; // Foreign Key to Quarto
+    private String status; // Internado/Alta
 
 }
