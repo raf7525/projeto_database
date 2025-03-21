@@ -12,12 +12,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Pedido {
     
-    private Integer idPedido;
+    private Long id;
     private LocalDateTime dataHora;
-    private Integer pacienteId;
-    private Integer quartoId;
+    private Long pacienteId;
+    private Long quartoId;
     private StatusPedido status;
     
+    public Pedido(LocalDateTime dataHora, Long pacienteId, Long quartoId, StatusPedido status) {
+        this.dataHora = dataHora;
+        this.pacienteId = pacienteId;
+        this.quartoId = quartoId;
+        this.status = status;
+    }
+
     @Getter
     public enum StatusPedido {
         EM_ANDAMENTO("Em andamento"),

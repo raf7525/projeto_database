@@ -10,7 +10,7 @@ id_paciente (PK)
 nome
 cpf
 data_nascimento
-quarto_id (FK para Quarto)
+quartoId (FK para Quarto)
 status (Internado/Alta)
 
 QUARTO
@@ -22,7 +22,7 @@ PEDIDO
 id_pedido (PK)
 data_hora
 paciente_id (FK para Paciente)
-quarto_id (FK para Quarto)
+quartoId (FK para Quarto)
 status (Em andamento, Entregue, Pago)
 
 PEDIDO_REALIZADO

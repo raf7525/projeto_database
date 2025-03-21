@@ -1,36 +1,39 @@
 package com.hospital.santajoana.domain.repository;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
-import lombok.RequiredArgsConstructor;
-
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public abstract class BaseRepository<T> {
-
-    protected final JdbcTemplate jdbcTemplate;
+    
     private final String tableName;
-    private final RowMapper<T> rowMapper; // RowMapper é uma interface que mapeia uma linha de um ResultSet para um objeto
+    private final String idColumn;
+    protected final JdbcTemplate jdbcTemplate;
+    private final RowMapper<T> rowMapper;
 
-    public T save(String insertSql, Object... params) {//object... params é um array de objetos
-        jdbcTemplate.update(insertSql, params); // ex de insertSql: "INSERT INTO table_name (column1, column2, column3) VALUES (?, ?, ?)"
-        return findById("id", jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class));
-    }
+    // Método abstrato para ser implementado no repositório específico
+    public abstract T save(T entity);
 
     public List<T> findAll() {
         String sql = "SELECT * FROM " + tableName;
         return jdbcTemplate.query(sql, rowMapper);
     }
 
-    public T findById(String idColumn, Object idValue) {
-        String sql = "SELECT * FROM " + tableName + " WHERE " + idColumn + " = ?";
-        return jdbcTemplate.queryForObject(sql, rowMapper, idValue);
+    public Optional<T> findById(Long id) {
+        String sql = "SELECT * FROM " + tableName + " WHERE " +idColumn + " = ?";
+        List<T> results = jdbcTemplate.query(sql, rowMapper, id);
+        return results.stream().findFirst();
     }
 
-    public void delete(String idColumn, Object idValue) {
-        String sql = "DELETE FROM " + tableName + " WHERE " + idColumn + " = ?";
-        jdbcTemplate.update(sql, idValue);
+    public void deleteById(Long id) {
+        String sql = "DELETE FROM " + tableName + " WHERE "+idColumn + " = ?";
+        jdbcTemplate.update(sql, id);
     }
+
+    public abstract T update(T entity);
+
 }

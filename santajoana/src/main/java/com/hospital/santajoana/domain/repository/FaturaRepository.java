@@ -1,55 +1,77 @@
 package com.hospital.santajoana.domain.repository;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.sql.Timestamp;
+import java.util.Optional;
 
 import com.hospital.santajoana.domain.entity.Fatura;
 import com.hospital.santajoana.domain.entity.Fatura.StatusPagamento;
 
+@Repository
 public class FaturaRepository extends BaseRepository<Fatura> {
 
     public FaturaRepository(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate, "fatura", (rs, rowNum) -> {
-            Timestamp dataPagamento = rs.getTimestamp("data_pagamento");
-            Integer idMetodoPagamento = rs.getObject("id_metodo_pagamento") != null ? 
-                rs.getInt("id_metodo_pagamento") : null;
+        super("FATURA","ID_FATURA" ,jdbcTemplate, (rs, rowNum) -> {
+            Timestamp dataPagamento = rs.getTimestamp("DATA_PAGAMENTO");
+            Long idMetodoPagamento = rs.getObject("ID_METODO_PAGAMENTO") != null ? 
+                rs.getLong("ID_METODO_PAGAMENTO") : null;
                 
             if (dataPagamento == null) {
                 return new Fatura(
-                    rs.getInt("id_fatura"),
-                    rs.getInt("paciente_id"),
-                    rs.getBigDecimal("valor_total"),
-                    StatusPagamento.valueOf(rs.getString("status_pagamento"))
+                    rs.getLong("ID_FATURA"),
+                    rs.getLong("PACIENTE_ID"),
+                    rs.getBigDecimal("VALOR_TOTAL"),
+                    StatusPagamento.valueOf(rs.getString("STATUS_PAGAMENTO"))
                 );
             } else {
                 return new Fatura(
-                    rs.getInt("id_fatura"),
-                    rs.getInt("paciente_id"),
-                    rs.getBigDecimal("valor_total"),
-                    StatusPagamento.valueOf(rs.getString("status_pagamento")),
+                    rs.getLong("ID_FATURA"),
+                    rs.getLong("PACIENTE_ID"),
+                    rs.getBigDecimal("VALOR_TOTAL"),
+                    StatusPagamento.valueOf(rs.getString("STATUS_PAGAMENTO")),
                     dataPagamento.toLocalDateTime(),
                     idMetodoPagamento
+                    
                 );
             }
         });
     }
 
     public Fatura save(Fatura fatura) {
-        String insertSql = "INSERT INTO fatura (paciente_id, valor_total, status_pagamento, data_pagamento, id_metodo_pagamento) VALUES (?, ?, ?, ?, ?)";
+        String insertSql = "INSERT INTO FATURA (PACIENTE_ID, VALOR_TOTAL, STATUS_PAGAMENTO, DATA_PAGAMENTO, ID_METODO_PAGAMENTO) VALUES (?, ?, ?, ?, ?)";
         
-        return super.save(insertSql,
+        jdbcTemplate.update(insertSql,
             fatura.getPacienteId(),
             fatura.getValorTotal(),
             fatura.getStatusPagamento().name(),
             fatura.getDataPagamento() != null ? Timestamp.valueOf(fatura.getDataPagamento()) : null,
             fatura.getIdMetodoPagamento());
+            return fatura;
+
     }
 
-    public Fatura findById(Integer id) {
-        return super.findById("id_fatura", id);
+    public Optional<Fatura> findById(Long id) {
+        return super.findById(id);
     }
 
-    public void delete(Integer id) {
-        super.delete("id_fatura", id);
+    public void deleteById(Long id) {
+        super.deleteById(id);
     }
+
+    public Fatura update(Fatura fatura) {
+        String updateSql = "UPDATE FATURA SET PACIENTE_ID = ?, VALOR_TOTAL = ?, STATUS_PAGAMENTO = ?, DATA_PAGAMENTO = ?, ID_METODO_PAGAMENTO = ? WHERE ID_FATURA = ?";
+        jdbcTemplate.update(updateSql,
+            fatura.getPacienteId(),
+            fatura.getValorTotal(),
+            fatura.getStatusPagamento().name(),
+            fatura.getDataPagamento() != null ? Timestamp.valueOf(fatura.getDataPagamento()) : null,
+            fatura.getIdMetodoPagamento(),
+            fatura.getId()
+        );
+        return fatura;
+    }
+
 }

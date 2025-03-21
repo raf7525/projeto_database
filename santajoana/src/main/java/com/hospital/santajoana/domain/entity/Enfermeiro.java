@@ -9,9 +9,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Enfermeiro {
     
-    private String cre;// Primary Key
-    
+    private Long id; // Primary Key
+    private String cre;
     private String nome;
     private String cargo;
     private String setor;
+
+    public Enfermeiro(String cre, String nome, String cargo, String setor) {
+        this.cre = cre;
+        this.nome = nome;
+        this.cargo = cargo;
+        this.setor = setor;
+    }
 }
+
+

@@ -4,16 +4,19 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class Quarto {
 
-    private Long idQuarto;
+    private Long id;
     
-    private String numero;
+    private Integer numero;
     
     private String tipo;
     
+    public Quarto(Integer numero, String tipo) {
+        this.numero = numero;
+        this.tipo = tipo;
+    }
 }
