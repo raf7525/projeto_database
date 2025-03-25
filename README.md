@@ -65,3 +65,11 @@ data_Hora
 
 
 Regras: Um paciente escolhe um método de pagamento ao quitar sua fatura
+
+CAMAREIRA_QUARTO_PACIENTE
+ID_CAMAREIRA_QUARTO_PACIENTE (PK)
+ID_PACIENTE (FK)
+ID_QUARTO (FK)
+ID_CAMAREIRA (FK)
+DATA_ENTRADA
+DATA_SAIDA
