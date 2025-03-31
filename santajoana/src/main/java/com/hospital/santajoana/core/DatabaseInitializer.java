@@ -21,12 +21,12 @@ public class DatabaseInitializer {
 
     public void dropTables() {
         String[] dropStatements = {
-            "DROP TABLE IF EXISTS CAMAREIRA_QUARTO_PERIODO;",
+            "DROP TABLE IF EXISTS ENFERMEIRO_QUARTO_PERIODO;",
             "DROP TABLE IF EXISTS PEDIDO_REALIZADO;",
             "DROP TABLE IF EXISTS FATURA;",
             "DROP TABLE IF EXISTS PEDIDO;",
             "DROP TABLE IF EXISTS PACIENTE;",
-            "DROP TABLE IF EXISTS CAMAREIRA;",
+            "DROP TABLE IF EXISTS ENFERMEIRO;",
             "DROP TABLE IF EXISTS QUARTO;",
             "DROP TABLE IF EXISTS PRODUTO;",
             "DROP TABLE IF EXISTS METODO_PAGAMENTO;"
@@ -39,31 +39,30 @@ public class DatabaseInitializer {
 
     public void createTables() {
         String[] sqlStatements = {
-
-            "CREATE TABLE IF NOT EXISTS QUARTO ("
-            + "ID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,"
-            + "NUMERO INT NOT NULL,"
-            + "TIPO ENUM('Enfermaria','Apartamento','UTI','Sala de Exame','Outro') NOT NULL"
-            + ");",
-            
             "CREATE TABLE IF NOT EXISTS PACIENTE ("
-            + "ID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,"
+            + "ID_PACIENTE INT PRIMARY KEY NOT NULL AUTO_INCREMENT,"
             + "NOME VARCHAR(100) NOT NULL,"
             + "CPF VARCHAR(11) UNIQUE NOT NULL,"
             + "DATA_NASCIMENTO DATE NOT NULL,"
+            + "quartoId INT,"
             + "STATUS ENUM('Internado','Alta') NOT NULL,"
-            + "FOREIGN KEY (ID_QUARTO) REFERENCES QUARTO (ID_QUARTO)"
+            + "FOREIGN KEY (quartoId) REFERENCES QUARTO (ID_QUARTO)"
             + ");",
 
+            "CREATE TABLE IF NOT EXISTS QUARTO ("
+            + "ID_QUARTO INT PRIMARY KEY NOT NULL AUTO_INCREMENT,"
+            + "NUMERO INT NOT NULL,"
+            + "TIPO ENUM('Enfermaria','Apartamento','UTI','Sala de Exame','Outro') NOT NULL"
+            + ");",
 
             "CREATE TABLE IF NOT EXISTS PEDIDO ("
             + "ID_PEDIDO INT PRIMARY KEY NOT NULL AUTO_INCREMENT,"
             + "DATA_HORA DATETIME NOT NULL,"
-            + "ID_PACIENTE INT,"
-            + "ID_QUARTO INT,"
+            + "PACIENTE_ID INT,"
+            + "quartoId INT,"
             + "STATUS ENUM('Em andamento','Entregue','Pago') NOT NULL,"
-            + "FOREIGN KEY (ID_PACIENTE) REFERENCES PACIENTE (ID_PACIENTE),"
-            + "FOREIGN KEY (ID_QUARTO) REFERENCES QUARTO (ID_QUARTO)"
+            + "FOREIGN KEY (PACIENTE_ID) REFERENCES PACIENTE (ID_PACIENTE),"
+            + "FOREIGN KEY (quartoId) REFERENCES QUARTO (ID_QUARTO)"
             + ");",
 
             "CREATE TABLE IF NOT EXISTS PRODUTO ("
@@ -75,48 +74,47 @@ public class DatabaseInitializer {
 
             "CREATE TABLE IF NOT EXISTS PEDIDO_REALIZADO ("
             + "ID_ITEM_PEDIDO INT PRIMARY KEY NOT NULL AUTO_INCREMENT,"
-            + "ID_PEDIDO INT,"
-            + "ID_PEDIDO INT,"
+            + "PEDIDO_ID INT,"
+            + "PRODUTO_ID INT,"
             + "QUANTIDADE INT NOT NULL,"
             + "VALOR_UNITARIO DECIMAL(10,2) NOT NULL,"
-            + "FOREIGN KEY (ID_PEDIDO) REFERENCES PEDIDO (ID_PEDIDO),"
-            + "FOREIGN KEY (ID_PEDIDO) REFERENCES PRODUTO (ID_PRODUTO)"
+            + "FOREIGN KEY (PEDIDO_ID) REFERENCES PEDIDO (ID_PEDIDO),"
+            + "FOREIGN KEY (PRODUTO_ID) REFERENCES PRODUTO (ID_PRODUTO)"
             + ");",
 
             "CREATE TABLE IF NOT EXISTS FATURA ("
             + "ID_FATURA INT PRIMARY KEY NOT NULL AUTO_INCREMENT,"
-            + "ID_PACIENTE INT,"
+            + "PACIENTE_ID INT,"
             + "VALOR_TOTAL DECIMAL(10,2) NOT NULL,"
             + "STATUS_PAGAMENTO ENUM('Pendente','Pago') NOT NULL,"
             + "DATA_PAGAMENTO DATETIME,"
             + "ID_METODO_PAGAMENTO INT,"
-            + "FOREIGN KEY (ID_PACIENTE) REFERENCES PACIENTE (ID),"
-            + "FOREIGN KEY (ID_METODO_PAGAMENTO) REFERENCES METODO_PAGAMENTO (ID)"
+            + "FOREIGN KEY (PACIENTE_ID) REFERENCES PACIENTE (ID_PACIENTE),"
+            + "FOREIGN KEY (ID_METODO_PAGAMENTO) REFERENCES METODO_PAGAMENTO (ID_METODO_PAGAMENTO)"
             + ");",
 
-            "CREATE TABLE IF NOT EXISTS CAMAREIRA ("
-            + "ID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,"
+            "CREATE TABLE IF NOT EXISTS ENFERMEIRO ("
+            + "ID_ENFERMEIRO INT PRIMARY KEY NOT NULL AUTO_INCREMENT,"
+            + "CRE VARCHAR(10) NOT NULL UNIQUE,"
             + "NOME VARCHAR(100) NOT NULL,"
             + "CARGO VARCHAR(50) NOT NULL,"
             + "SETOR VARCHAR(50) NOT NULL"
             + ");",
 
             "CREATE TABLE IF NOT EXISTS METODO_PAGAMENTO ("
-            + "ID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,"
+            + "ID_METODO_PAGAMENTO INT PRIMARY KEY NOT NULL AUTO_INCREMENT,"
             + "TIPO ENUM('Cartão de Crédito','Cartão de Débito','Pix') NOT NULL,"
             + "DATA_HORA DATETIME NOT NULL"
             + ");",
 
-            "CREATE TABLE IF NOT EXISTS CAMAREIRA_QUARTO_PACIENTE ("
-            +"UNIQUE (ID_CAMAREIRA, ID_PACIENTE, ID_QUARTO, DATA_INICIO)"
-            + "ID_CAMAREIRA INT NOT NULL,"
-            +"ID_PACIENTE INT,"
-            + "ID_QUARTO INT,"
+            "CREATE TABLE IF NOT EXISTS ENFERMEIRO_QUARTO_PERIODO ("
+            + "ID_ENFERMEIRO_QUARTO_PERIODO INT PRIMARY KEY NOT NULL AUTO_INCREMENT,"
+            + "ENFERMEIRO_CRE VARCHAR(10),"
+            + "quartoId INT,"
             + "DATA_INICIO DATETIME NOT NULL,"
             + "DATA_FIM DATETIME,"
-            + "FOREIGN KEY (ID_CAMAREIRA) REFERENCES CAMAREIRA (ID),"
-            + "FOREIGN KEY (ID_QUARTO) REFERENCES QUARTO (ID)"
-            + "FOREIGN KEY (ID_PACIENTE) REFERENCES PACIENTE (ID_PACIENTE)"
+            + "FOREIGN KEY (ENFERMEIRO_CRE) REFERENCES ENFERMEIRO (CRE),"
+            + "FOREIGN KEY (quartoId) REFERENCES QUARTO (ID_QUARTO)"
             + ");"
         };
 
